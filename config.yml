@@ -1,0 +1,9 @@
+env: development
+grpc_port: 50051
+http_port: 4000
+db:
+  user: root
+  name: todo_app
+  host: localhost
+  password:
+  port: 3306
