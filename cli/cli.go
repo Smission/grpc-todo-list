@@ -260,6 +260,6 @@ func getTasks() {
 		}
 
 		fmt.Println(task.CreatedAt)
-		fmt.Printf("ID: %d, Title: %s, Description: %s, Status: %s, Added At: %s, Last Updated At: %s\n", task.Id, task.Title, task.Description, status, task.CreatedAt.AsTime().Format(time.RFC3339), task.UpdatedAt.String())
+		fmt.Printf("ID: %d, Title: %s, Description: %s, Status: %s\n", task.Id, task.Title, task.Description, status)
 	}
 }
