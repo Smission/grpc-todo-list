@@ -80,10 +80,107 @@ CLI Usage
 ## Once the application is running, you can interact via the CLI:
 ./todo-app
 
-# The CLI provides the following options:
+# The CLI provides the following options (which can be used to used to do different operations):
 
 [1] Add a Task
 [2] Get all Tasks
 [3] Complete a Task
 [4] Exit
-Add a Task
+
+
+# Swagger Rest API Definition
+
+``` yaml
+openapi: 3.0.1
+info:
+  title: Todo List API
+  description: API for managing tasks in a Todo List application.
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /task:
+    post:
+      summary: Add a new task
+      operationId: addTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+              required:
+                - title
+      responses:
+        '200':
+          description: Task added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the created task
+        '400':
+          description: Invalid input
+          
+  /task/all:
+    get:
+      summary: Retrieve all tasks
+      operationId: getTasks
+      responses:
+        '200':
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    status:
+                      type: string
+                      enum: [Incomplete, Completed]
+        '500':
+          description: Internal server error
+
+  /task/{id}:
+    patch:
+      summary: Mark a task as complete
+      operationId: completeTask
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the task to complete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates if the operation was successful
+        '404':
+          description: Task not found
+        '400':
+          description: Invalid ID format
+```
+

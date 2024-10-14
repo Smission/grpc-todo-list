@@ -259,7 +259,6 @@ func getTasks() {
 			status = "Completed"
 		}
 
-		fmt.Println(task.CreatedAt)
 		fmt.Printf("ID: %d, Title: %s, Description: %s, Status: %s\n", task.Id, task.Title, task.Description, status)
 	}
 }

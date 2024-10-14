@@ -1,0 +1,177 @@
+## use https://app.ilograph.com/new/__overview to visualise
+colors:
+- cli: &color_cli SkyBlue
+- grpc: &color_grpc LightSalmon
+- db: &color_db PaleGreen
+- http: &color_http LightCoral
+- server: &color_server Khaki
+
+perspectives:
+- name: CLI Perspective
+  subtitle: How the CLI interacts with the gRPC server and database.
+  focus:
+  - CLI
+  - gRPC Server
+  - Database
+  relations:
+  - from: CLI
+    to: gRPC Server
+  - from: CLI
+    to: Database
+
+- name: gRPC Perspective
+  subtitle: Focuses on the gRPC server and how it interacts with the database.
+  focus:
+  - gRPC Server
+  - Database
+  - Client
+  relations:
+  - from: gRPC Server
+    to: Database
+  - from: Client
+    to: gRPC Server
+
+- name: HTTP Gateway Perspective
+  subtitle: Displays how the HTTP Gateway interacts with the gRPC server and database.
+  focus:
+  - HTTP Gateway
+  - gRPC Server
+  - Database
+  relations:
+  - from: HTTP Gateway
+    to: gRPC Server
+  - from: gRPC Server
+    to: Database
+
+resources:
+- name: CLI
+  subtitle: Cobra-based CLI that starts the gRPC server and allows interaction with the gRPC services.
+  backgroundColor: *color_cli
+  children:
+  - name: cobra start command
+    subtitle: Starts the gRPC server and keeps it running until termination.
+    backgroundColor: *color_server
+    relations:
+    - from: cobra start command
+      to: gRPC Server
+  - name: cobra client command
+    subtitle: Creates a gRPC client and interacts with the server via commands.
+    backgroundColor: *color_cli
+    relations:
+    - from: cobra client command
+      to: gRPC Server
+    children:
+    - name: add command
+      subtitle: Adds a new task to the todo list via the gRPC client.
+      backgroundColor: *color_cli
+      relations:
+      - from: add command
+        to: gRPC Server
+      - from: gRPC Server
+        to: TodoService
+      - from: TodoService
+        to: Database
+    - name: get command
+      subtitle: Retrieves all tasks from the todo list via the gRPC client.
+      backgroundColor: *color_cli
+      relations:
+      - from: get command
+        to: gRPC Server
+      - from: gRPC Server
+        to: TodoService
+      - from: TodoService
+        to: Database
+    - name: complete command
+      subtitle: Marks a task as complete via the gRPC client.
+      backgroundColor: *color_cli
+      relations:
+      - from: complete command
+        to: gRPC Server
+      - from: gRPC Server
+        to: TodoService
+      - from: TodoService
+        to: Database
+
+- name: gRPC Server
+  subtitle: Handles todo list operations exposed via gRPC, interacting with the database.
+  backgroundColor: *color_grpc
+  relations:
+  - from: gRPC Server
+    to: Database
+  children:
+  - name: TodoService
+    subtitle: Interacts with the database for todo list operations.
+    backgroundColor: *color_grpc
+    relations:
+    - from: TodoService
+      to: Database
+  - name: AddTask service
+    subtitle: Handles addition of tasks from gRPC client requests.
+    backgroundColor: *color_grpc
+    relations:
+    - from: AddTask service
+      to: Database
+  - name: GetTasks service
+    subtitle: Retrieves all tasks from the MySQL database.
+    backgroundColor: *color_grpc
+    relations:
+    - from: GetTasks service
+      to: Database
+  - name: CompleteTask service
+    subtitle: Marks a specific task as complete in the database.
+    backgroundColor: *color_grpc
+    relations:
+    - from: CompleteTask service
+      to: Database
+
+- name: Client
+  subtitle: gRPC client created by the CLI to communicate with the gRPC server.
+  backgroundColor: *color_cli
+  relations:
+  - from: Client
+    to: gRPC Server
+  children:
+  - name: add command
+    subtitle: Sends an AddTask request to the gRPC server.
+    backgroundColor: *color_cli
+    relations:
+    - from: add command
+      to: TodoService
+  - name: get command
+    subtitle: Sends a GetTasks request to the gRPC server.
+    backgroundColor: *color_cli
+    relations:
+    - from: get command
+      to: TodoService
+  - name: complete command
+    subtitle: Sends a CompleteTask request to the gRPC server.
+    backgroundColor: *color_cli
+    relations:
+    - from: complete command
+      to: TodoService
+
+- name: HTTP Gateway
+  subtitle: Exposes RESTful endpoints, translating HTTP requests to gRPC.
+  backgroundColor: *color_http
+  relations:
+  - from: HTTP Gateway
+    to: gRPC Server
+  children:
+  - name: REST API (HTTP to gRPC)
+    subtitle: Converts incoming HTTP requests into gRPC requests.
+    backgroundColor: *color_http
+    relations:
+    - from: REST API
+      to: gRPC Server
+    - from: gRPC Server
+      to: Database
+
+- name: Database
+  subtitle: MySQL database storing tasks and their states.
+  backgroundColor: *color_db
+  children:
+  - name: todo_app (DB)
+    subtitle: MySQL database storing todo list tasks.
+    backgroundColor: *color_db
+
+
